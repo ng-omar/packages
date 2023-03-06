@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
+  "version": "0.2",
+  "words": [
+    "Elsayed",
+    "stylelint",
+    "commitlint",
+    "devkit",
+    "tailwindcss",
+    "nrwl",
+    "Buildable"
+  ],
+  "language": "en,ar",
+  "ignoreRegExpList": ["/[ء-ي]+/"],
+  "files": ["**"],
+  "enableGlobDot": true,
+  "ignorePaths": [
+    "node_modules",
+    "package.json",
+    "dist",
+    ".git",
+    ".angular",
+    ".gitignore",
+    ".husky/_/**",
+    ".eslintrc.js",
+    "**/*.svg",
+    "decorate-angular-cli.js",
+    ".browserslistrc",
+    "cspell.json",
+    ".vscode/**",
+    "jest.config.ts",
+    "android",
+    "ios",
+    ".scannerwork",
+    "nginx*.conf",
+    ".idea"
+  ]
+}
