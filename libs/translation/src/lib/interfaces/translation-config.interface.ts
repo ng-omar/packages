@@ -7,6 +7,6 @@ export interface ITranslationConfig {
   localStorageKey?: string;
   i18nFolderPath?: string;
   translationEndpoint?: string;
-  strings?: IStrings;
+  strings?: IStrings | IStrings[];
   module?: string;
 }

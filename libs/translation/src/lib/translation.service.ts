@@ -71,13 +71,21 @@ export class TranslationService {
     this.translateService.use(language.code);
   }
 
-  public setTranslations(strings: IStrings): void {
-    strings = flattenStrings(strings);
+  public setTranslations(strings: IStrings | IStrings[]): void {
+    const list: { code: string; strings: IStrings }[] = [];
 
-    this.translateService.setTranslation(
-      this.currentLanguage.code,
-      strings,
-      true
+    if (Array.isArray(strings))
+      strings.forEach((item, index) => {
+        list.push({ code: this.languages[index].code, strings: item });
+      });
+    else
+      list.push({
+        code: this.currentLanguage.code,
+        strings: flattenStrings(strings),
+      });
+
+    list.forEach((item) =>
+      this.translateService.setTranslation(item.code, item.strings, true)
     );
   }
 

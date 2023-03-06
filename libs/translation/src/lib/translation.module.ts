@@ -32,7 +32,7 @@ export class TranslationModule {
     @Inject(LOCAL_STORAGE_KEY_TOKEN) localStorageKey?: string,
     @Inject(I18N_FOLDER_PATH_TOKEN) i18nFolderPath?: string,
     @Inject(TRANSLATION_END_POINT_TOKEN) translationEndPoint?: string,
-    @Inject(STRINGS_TOKEN) strings?: IStrings,
+    @Inject(STRINGS_TOKEN) strings?: IStrings[] | IStrings,
     @Inject(MODULE_TOKEN) module?: string
   ) {
     if (isRoot && TranslationModule.isInitialized) {
@@ -57,7 +57,8 @@ export class TranslationModule {
     if ((translationEndPoint || i18nFolderPath) && module)
       this.translationService.loadStringsFromModule(module).subscribe();
 
-    if (strings) this.translationService.setTranslations(strings);
+    if (strings && (Array.isArray(strings) ? strings?.length : strings))
+      this.translationService.setTranslations(strings);
   }
 
   public static forRoot(
