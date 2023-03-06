@@ -1,6 +1,6 @@
 {
   "name": "@ng-omar/translation",
-  "version": "0.0.5",
+  "version": "0.0.9",
   "private": false,
   "description": "NG Omar Translation Packages",
   "keywords": [
@@ -27,7 +27,7 @@
   "dependencies": {
     "tslib": "^2.3.0"
   },
-  "peerDependencies": {
+  "devDependencies": {
     "@angular/common": "^15.2.0",
     "@angular/core": "^15.2.0",
     "@ngx-translate/core": "^14.0.0",

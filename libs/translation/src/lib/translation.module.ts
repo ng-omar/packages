@@ -3,17 +3,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslationService } from './translation.service';
-import { ILanguage, ILanguageConfig, IStrings } from './interfaces';
-import { RequestType } from './types';
+import { ILanguage, ITranslationConfig, IStrings } from './interfaces';
 import {
-  DEFAULT_LANGUAGE_TOKEN,
-  I18N_PATH_TOKEN,
   IS_ROOT_TOKEN,
   LANGUAGES_TOKEN,
+  DEFAULT_LANGUAGE_TOKEN,
   LOCAL_STORAGE_KEY_TOKEN,
-  MODULE_TOKEN,
-  REQUEST_TYPE_TOKEN,
+  I18N_FOLDER_PATH_TOKEN,
+  TRANSLATION_END_POINT_TOKEN,
   STRINGS_TOKEN,
+  MODULE_TOKEN,
 } from './config';
 import { StringsComponent } from './components/strings/strings.component';
 
@@ -27,14 +26,14 @@ export class TranslationModule {
 
   public constructor(
     private readonly translationService: TranslationService,
-    @Inject(LANGUAGES_TOKEN) languages: ILanguage[],
     @Inject(IS_ROOT_TOKEN) isRoot: boolean,
-    @Inject(LOCAL_STORAGE_KEY_TOKEN) localStorageKey?: string,
+    @Inject(LANGUAGES_TOKEN) languages: ILanguage[],
     @Inject(DEFAULT_LANGUAGE_TOKEN) defaultLanguage?: string,
-    @Inject(I18N_PATH_TOKEN) i18nPath?: string,
-    @Inject(REQUEST_TYPE_TOKEN) requestType?: RequestType,
-    @Inject(MODULE_TOKEN) module?: string,
-    @Inject(STRINGS_TOKEN) strings?: IStrings
+    @Inject(LOCAL_STORAGE_KEY_TOKEN) localStorageKey?: string,
+    @Inject(I18N_FOLDER_PATH_TOKEN) i18nFolderPath?: string,
+    @Inject(TRANSLATION_END_POINT_TOKEN) translationEndPoint?: string,
+    @Inject(STRINGS_TOKEN) strings?: IStrings,
+    @Inject(MODULE_TOKEN) module?: string
   ) {
     if (isRoot && TranslationModule.isInitialized) {
       throw new Error('You cannot use forRoot multiple times');
@@ -50,47 +49,48 @@ export class TranslationModule {
       this.translationService.init(
         languages,
         defaultLanguage,
-        i18nPath,
-        requestType,
         localStorageKey,
-        module,
-        strings
+        i18nFolderPath,
+        translationEndPoint
       );
 
-    if (!isRoot && i18nPath && module)
+    if ((translationEndPoint || i18nFolderPath) && module)
       this.translationService.loadStringsFromModule(module).subscribe();
 
-    if (!isRoot && strings) this.translationService.setTranslations(strings);
+    if (strings) this.translationService.setTranslations(strings);
   }
 
   public static forRoot(
-    config: ILanguageConfig
+    config: ITranslationConfig
   ): ModuleWithProviders<TranslationModule> {
     return {
       ngModule: TranslationModule,
       providers: [
+        { provide: IS_ROOT_TOKEN, useValue: true },
         { provide: LANGUAGES_TOKEN, useValue: config.languages },
         { provide: DEFAULT_LANGUAGE_TOKEN, useValue: config.defaultLanguage },
-        { provide: I18N_PATH_TOKEN, useValue: config.i18nPath },
-        { provide: REQUEST_TYPE_TOKEN, useValue: config.requestType },
         { provide: LOCAL_STORAGE_KEY_TOKEN, useValue: config.localStorageKey },
-        { provide: MODULE_TOKEN, useValue: config.module },
+        { provide: I18N_FOLDER_PATH_TOKEN, useValue: config.i18nFolderPath },
+        {
+          provide: TRANSLATION_END_POINT_TOKEN,
+          useValue: config.translationEndpoint,
+        },
         { provide: STRINGS_TOKEN, useValue: config.strings },
-        { provide: IS_ROOT_TOKEN, useValue: true },
+        { provide: MODULE_TOKEN, useValue: config.module },
         TranslationService,
       ],
     };
   }
 
   public static forChild(
-    config?: Pick<ILanguageConfig, 'module' | 'strings'>
+    config?: Pick<ITranslationConfig, 'module' | 'strings'>
   ): ModuleWithProviders<TranslationModule> {
     return {
       ngModule: TranslationModule,
       providers: [
+        { provide: IS_ROOT_TOKEN, useValue: false },
         { provide: MODULE_TOKEN, useValue: config?.module },
         { provide: STRINGS_TOKEN, useValue: config?.strings },
-        { provide: IS_ROOT_TOKEN, useValue: false },
       ],
     };
   }

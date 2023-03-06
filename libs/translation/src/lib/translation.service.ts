@@ -1,23 +1,22 @@
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { map, Observable, tap } from 'rxjs';
+import { catchError, map, Observable, switchMap, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { TranslateService } from '@ngx-translate/core';
 import { DateFnsConfigurationService } from 'ngx-date-fns';
 import { ILanguage, IStrings } from './interfaces';
-import { RequestType } from './types';
-import { flattenStrings, getI18nUrl } from './utils';
+import { flattenStrings } from './utils';
 
 @Injectable()
 export class TranslationService {
   public languages: ILanguage[] = [];
 
-  public i18nPath?: string;
-
-  public requestType!: RequestType;
-
   private localStorageKey!: string;
 
   private defaultLanguage?: string;
+
+  private i18nFolderPath?: string;
+
+  private translationEndPoint?: string;
 
   public constructor(
     private readonly http: HttpClient,
@@ -35,17 +34,15 @@ export class TranslationService {
   public init(
     languages: ILanguage[],
     defaultLanguage?: string,
-    i18nPath?: string,
-    requestType: RequestType = 'json',
     localStorageKey = 'selected-language',
-    module = 'default',
-    strings?: IStrings
+    i18nFolderPath?: string,
+    translationEndPoint?: string
   ): void {
     this.languages = languages;
-    this.i18nPath = i18nPath;
-    this.localStorageKey = localStorageKey;
     this.defaultLanguage = defaultLanguage;
-    this.requestType = requestType;
+    this.localStorageKey = localStorageKey;
+    this.i18nFolderPath = i18nFolderPath;
+    this.translationEndPoint = translationEndPoint;
 
     const selectedLanguage = this.getSavedUserLanguageOrDefault();
 
@@ -54,9 +51,6 @@ export class TranslationService {
     this.translateService.addLangs(this.languages.map((l) => l.code));
     if (defaultLanguage) this.translateService.setDefaultLang(defaultLanguage);
     this.translateService.use(selectedLanguage.code);
-
-    if (i18nPath) this.loadStringsFromModule(module).subscribe();
-    if (strings) this.setTranslations(strings);
 
     if (selectedLanguage.dateFnsLocale) {
       this.dateFnsConfig.setLocale(selectedLanguage.dateFnsLocale);
@@ -77,13 +71,6 @@ export class TranslationService {
     this.translateService.use(language.code);
   }
 
-  public loadStringsFromModule(module: string): Observable<{ isLoaded: true }> {
-    return this.http.get<IStrings>(this.getI18nPath(module)).pipe(
-      tap(this.setTranslations.bind(this)),
-      map(() => ({ isLoaded: true }))
-    );
-  }
-
   public setTranslations(strings: IStrings): void {
     strings = flattenStrings(strings);
 
@@ -94,13 +81,52 @@ export class TranslationService {
     );
   }
 
-  public getI18nPath(
+  public getI18nFolderPath(
     module: string,
     languageCode = this.currentLanguage.code
   ): string {
-    if (!this.i18nPath) throw new Error('i18nPath not set');
+    if (!this.i18nFolderPath) throw new Error('Please set i18nFolderPath');
+    return `${this.i18nFolderPath}/${module}/${languageCode}.json`;
+  }
 
-    return getI18nUrl(this.i18nPath, module, languageCode, this.requestType);
+  public getTranslationEndPoint(
+    module?: string,
+    languageCode = this.currentLanguage.code
+  ): string {
+    if (!this.translationEndPoint)
+      throw new Error('Please set translationEndPoint');
+    const endPoint = module ? `/${module}/${languageCode}` : '';
+
+    return `${this.translationEndPoint}/modules${endPoint}`;
+  }
+
+  public loadStringsFromModule(module: string): Observable<{ isLoaded: true }> {
+    if (this.i18nFolderPath && this.translationEndPoint) {
+      return this.loadTranslation(module, 'json').pipe(
+        catchError(() => this.loadTranslation(module, 'http')),
+        switchMap(() => this.loadTranslation(module, 'http'))
+      );
+    }
+
+    if (this.i18nFolderPath) return this.loadTranslation(module, 'json');
+    if (this.translationEndPoint) return this.loadTranslation(module, 'http');
+
+    throw new Error('Please set i18nFolderPath or translationEndPoint');
+  }
+
+  private loadTranslation(
+    module: string,
+    type: 'json' | 'http'
+  ): Observable<{ isLoaded: true }> {
+    const url =
+      type === 'json'
+        ? this.getI18nFolderPath(module)
+        : this.getTranslationEndPoint(module);
+
+    return this.http.get<IStrings>(url).pipe(
+      tap((strings) => this.setTranslations(strings)),
+      map(() => ({ isLoaded: true }))
+    );
   }
 
   private getSavedUserLanguageOrDefault(): ILanguage {
