@@ -1,0 +1,29 @@
+<section class="container">
+  <div class="languages-container tabs-container">
+    <button *ngFor="let language of languages" class="tab-item" (click)="onChangeLanguage(language)" [class.active]="selectedLanguage.code === language.code">{{ language.label }}</button>
+  </div>
+
+  <div class="modules-container tabs-container">
+    <button *ngFor="let module of modules" class="tab-item" (click)="onChangeModule(module)" [class.active]="selectedModule === module">{{ module }}</button>
+  </div>
+
+  <form class="strings-form" [formGroup]="formGroup" (ngSubmit)="onClickSubmit()" *ngIf="selectedModule">
+    <section class="strings-section" *ngFor="let section of formGroup.controls | keyvalue" [formGroupName]="section.key">
+      <table>
+        <thead>
+          <th colspan="2" class="section-title">{{ section.key }}</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let string of $any(section.value).controls | keyvalue" class="string-item">
+            <th>{{ string.key }}</th>
+            <td>
+              <input type="text" [dir]="selectedLanguage.dir" [formControlName]="$any(string.key)" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <button class="strings-save-btn" type="submit">Save</button>
+  </form>
+</section>

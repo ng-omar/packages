@@ -1,0 +1,36 @@
+{
+  "name": "translation",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "sourceRoot": "libs/translation/src",
+  "prefix": "translation",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/angular:package",
+      "outputs": ["{workspaceRoot}/dist/{projectRoot}"],
+      "options": {
+        "project": "libs/translation/ng-package.json"
+      },
+      "configurations": {
+        "production": {
+          "tsConfig": "libs/translation/tsconfig.lib.prod.json"
+        },
+        "development": {
+          "tsConfig": "libs/translation/tsconfig.lib.json"
+        }
+      },
+      "defaultConfiguration": "production"
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/translation/**/*.ts",
+          "libs/translation/**/*.html"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

@@ -33,6 +33,7 @@
     "devkit",
     "tailwindcss",
     "nrwl",
-    "Buildable"
+    "Buildable",
+    "packagr"
   ]
 }

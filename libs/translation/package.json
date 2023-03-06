@@ -1,0 +1,44 @@
+{
+  "name": "@ng-omar/translation",
+  "version": "0.0.5",
+  "private": false,
+  "description": "NG Omar Translation Packages",
+  "keywords": [
+    "angular"
+  ],
+  "homepage": "https://github.com/ng-omar/packages#readme",
+  "bugs": {
+    "url": "https://github.com/ng-omar/packages/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ng-omar/packages.git"
+  },
+  "funding": [
+    "https://ng-omar.com/donate"
+  ],
+  "license": "MIT",
+  "author": {
+    "name": "Omar Elsayed",
+    "email": "challengeromar97@gmail.com",
+    "url": "https://ng-omar.com"
+  },
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "peerDependencies": {
+    "@angular/common": "^15.2.0",
+    "@angular/core": "^15.2.0",
+    "@ngx-translate/core": "^14.0.0",
+    "date-fns": "^2.29.3",
+    "ngx-date-fns": "^10.0.1"
+  },
+  "engines": {
+    "node": "18.10.0",
+    "npm": ">=7"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
