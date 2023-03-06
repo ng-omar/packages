@@ -1,17 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json",
   "version": "0.2",
-  "words": [
-    "Elsayed",
-    "stylelint",
-    "commitlint",
-    "devkit",
-    "tailwindcss",
-    "nrwl",
-    "Buildable"
-  ],
-  "language": "en,ar",
-  "ignoreRegExpList": ["/[ء-ي]+/"],
   "files": ["**"],
   "enableGlobDot": true,
   "ignorePaths": [
@@ -34,5 +23,16 @@
     ".scannerwork",
     "nginx*.conf",
     ".idea"
+  ],
+  "ignoreRegExpList": ["/[ء-ي]+/"],
+  "language": "en,ar",
+  "words": [
+    "Elsayed",
+    "stylelint",
+    "commitlint",
+    "devkit",
+    "tailwindcss",
+    "nrwl",
+    "Buildable"
   ]
 }
