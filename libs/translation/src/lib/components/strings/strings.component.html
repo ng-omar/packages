@@ -1,4 +1,4 @@
-<section class="container">
+<section class="strings-container">
   <div class="languages-container tabs-container">
     <button *ngFor="let language of languages" class="tab-item" (click)="onChangeLanguage(language)" [class.active]="selectedLanguage.code === language.code">{{ language.label }}</button>
   </div>
